@@ -13,7 +13,7 @@ let grid = [
 ]
 
 function takeTurn(e) {
-   // while(winner === 'not found'){
+   //while(winner !== 'yellow' || winner !== 'red'){
     const id = e.target.id   // 'row1-col1'   ________x
     // 'rowY-colX' 
 
@@ -23,7 +23,7 @@ function takeTurn(e) {
     const lowestAvailableRow = getLowestAvailableRowInColumn(colNum, grid)
     console.log(`Lowest available row: ${lowestAvailableRow}`)
 
-    if (lowestAvailableRow !== null) {
+    if (lowestAvailableRow !== null && (winner !== 'red' || winner !== 'yellow')) {
         turn++
 
         if (player1 === "red") {
@@ -38,7 +38,7 @@ function takeTurn(e) {
     }
     let answer = checkWinner();
     //winner = checkWinner();
-    if(answer == false)
+    if(answer === false)
     {
         if(turn >= 42)
             console.log('draw');
@@ -47,7 +47,7 @@ function takeTurn(e) {
     if(winner === 'red')
     console.log('red');
     if(winner === 'yellow')
-    console.log('red');
+    console.log('yellow');
 
 
 
@@ -56,8 +56,8 @@ function takeTurn(e) {
     //console.log(`Turn number ${turn}`)
     //console.log(grid)
 
-}
 
+}
 function getLowestAvailableRowInColumn(colNum, myGridSoItIs) {
     for (let i = 5; i >= 0; i--) {
         if (myGridSoItIs[i][colNum - 1] === null) {
@@ -83,6 +83,9 @@ function reset(e) {
             document.getElementById(`row${rowIndex+1}-col${columnIndex+1}`).style.backgroundColor = "white";
         }
     }
+    document.getElementById('winner-message').style.backgroundColor = 'white';
+    document.getElementById('winner-message').textContent='';
+    winner = 'not found';
 }
 
 function checkWinner() {
@@ -91,25 +94,26 @@ function checkWinner() {
     const col_result = checkColumns();
     const dia_result = checkDiagonal();
     const counterdia_result = checkCounterDiagonal();
-    if (row_result !== 'not found')
-        return row_result;
-    if (col_result !== 'not found')
-        return col_result;
-    if (dia_result !== 'not found')
-    return dia_result;
-    if (counterdia_result !== 'not found')
-    return counterdia_result;
+    // if (row_result !== 'not found')
+    //     return row_result;
+    // if (col_result !== 'not found')
+    //     return col_result;
+    // if (dia_result !== 'not found')
+    // return dia_result;
+    // if (counterdia_result !== 'not found')
+    // return counterdia_result;
     if (row_result === 'not found' && col_result === 'not found' && dia_result === 'not found' && counterdia_result === 'not found')
-        return 'not found';
+        return 'not found'
 
 }
 
 function checkRows() {
-    console.log('I am checking rows')
+    //console.log('I am checking rows')
     for(let row = 0; row < 6; row++){
         for(let col = 0;col <4; col++) {
             if (grid[row][col] === grid[row][col+1] && grid[row][col] === grid[row][col+2] && grid[row][col] === grid[row][col+3]&&grid[row][col] !== null)
                { winner = grid[row][col];
+                displayWinner();
                 return true;
                 
             }
@@ -125,6 +129,7 @@ function checkColumns() {
             if(grid[row][col] === grid[row+1][col]&& grid[row][col] === grid[row+2][col] && grid[row][col] === grid[row+3][col] && grid[row][col] !== null)
             {
                 winner = grid[row][col];
+                displayWinner();
                 return true;
             }
         }
@@ -138,6 +143,7 @@ function checkDiagonal() {
             if(grid[row][col] === grid[row+1][col+1] && grid[row][col] === grid[row+2][col+2] && grid[row][col] === grid[row+3][col+3] && grid[row][col] !== null)
             {
                 winner = grid[row][col];
+                displayWinner();
                 return true;
             }
         }
@@ -148,15 +154,31 @@ function checkDiagonal() {
 }
 
 function checkCounterDiagonal(){
-    console.log('Checking counterD')
+    //console.log('Checking counterD')
     for(let row=3; row<6; row++){
         for(let col=0; col<4;col++){
             if(grid[row][col]===grid[row-1][col+1]&& grid[row][col]===grid[row-2][col+2]&&grid[row][col]===grid[row-3][col+3]&& grid[row][col] !== null)
             {
                 winner = grid[row][col];
+                displayWinner();
                 return true; }
         }
 
     }
     return false;
+}
+
+function displayWinner() {
+    if(winner === 'red') {
+        const winnerdisplay = document.getElementById('winner-message');
+        winnerdisplay.style.display = 'block';
+        winnerdisplay.style.backgroundColor = 'red';
+        winnerdisplay.textContent = "RED WON!";
+    }
+    else if(winner === 'yellow'){
+        const winnerdisplay = document.getElementById('winner-message');
+        winnerdisplay.style.display = 'block';
+        winnerdisplay.style.backgroundColor = 'yellow';
+        winnerdisplay.textContent = "YELLOW WON!";
+    }
 }

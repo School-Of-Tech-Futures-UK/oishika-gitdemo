@@ -1,25 +1,44 @@
+.col {
+    width: 50px;
+    height: 50px;
+    margin: 0px;
+    border: 2px black solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 80px;
+}
+
+.row {
+    width: 400px;
+    margin: 0px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.marker {
+    width: 80px;
+    height: 80px;
+}
 
 
-.mydiv{
-    border: 0.5px solid black; 
+body {
     text-align: center;
 }
 
-.jiaqirounded{
-    border-radius: 25px
+#header{
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    font-weight: bold;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.reset-button{
+    margin-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#winner-message {
+    display: none;
+    background-color: white;
+    
+}
