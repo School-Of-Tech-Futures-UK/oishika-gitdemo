@@ -22,10 +22,14 @@ function takeTurn(e) {
 
     const lowestAvailableRow = getLowestAvailableRowInColumn(colNum, grid)
     console.log(`Lowest available row: ${lowestAvailableRow}`)
+    // if (winner === 'not found' && turn === 42)
+    // {
+    //     console.log('draw')
+    // }
 
-    if (lowestAvailableRow !== null && (winner !== 'red' || winner !== 'yellow')) {
+    if (lowestAvailableRow !== null && winner === 'not found') {
         turn++
-
+        console.log(turn)
         if (player1 === "red") {
             grid[lowestAvailableRow][colNum - 1] = "red"
             document.getElementById(`row${lowestAvailableRow + 1}-col${colNum}`).style.backgroundColor = 'red';
@@ -38,16 +42,17 @@ function takeTurn(e) {
     }
     let answer = checkWinner();
     //winner = checkWinner();
-    if(answer === false)
+    if(answer === 'not found')
     {
-        if(turn >= 42)
-            console.log('draw');
+        if(turn === 42)
+           { console.log('draw');
+           const winnerdisplay = document.getElementById('winner-message');
+           winnerdisplay.style.display = 'block';
+           winnerdisplay.style.backgroundColor = 'lightblue';
+           winnerdisplay.textContent = "DRAW!";
+    }
 
     }
-    if(winner === 'red')
-    console.log('red');
-    if(winner === 'yellow')
-    console.log('yellow');
 
 
 
@@ -86,6 +91,7 @@ function reset(e) {
     document.getElementById('winner-message').style.backgroundColor = 'white';
     document.getElementById('winner-message').textContent='';
     winner = 'not found';
+    turn = 0;
 }
 
 function checkWinner() {
@@ -94,15 +100,8 @@ function checkWinner() {
     const col_result = checkColumns();
     const dia_result = checkDiagonal();
     const counterdia_result = checkCounterDiagonal();
-    // if (row_result !== 'not found')
-    //     return row_result;
-    // if (col_result !== 'not found')
-    //     return col_result;
-    // if (dia_result !== 'not found')
-    // return dia_result;
-    // if (counterdia_result !== 'not found')
-    // return counterdia_result;
-    if (row_result === 'not found' && col_result === 'not found' && dia_result === 'not found' && counterdia_result === 'not found')
+ 
+    if (row_result === false && col_result === false && dia_result === false && counterdia_result === false)
         return 'not found'
 
 }
