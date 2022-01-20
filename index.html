@@ -35,6 +35,7 @@
 
     <script src="./connect4.js" ></script>
     <div id = "winner-message"></div>
+    <div id = 'enter-name'></div>
     <div id = "score-red"></div>
     <div id = "score-yellow"></div>
     <div id="connect4Board">
@@ -94,7 +95,15 @@
         </div>
     </div>
 <button class = 'reset-button' onClick="reset(event);">Reset</button>
-
+<div>
+<label for="player-red">Player Red</label>
+<input type="text" id="player-red" name="fname"><br><br>
+<label for="player-yellow">Player Yellow</label>
+<input type="text" id="player-yellow" name="lname"><br><br>
+</div>
+<div>
+    <button class = 'submit' onClick="getUserName(event);"> Submit </button>
+</div>
 </body>
 
 </html>
