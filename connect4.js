@@ -5,6 +5,8 @@ let turn = 0
 let player1 = 'red'
 let winner = 'not found'
 let scores = {}
+let playerRed = ''
+let playerYellow = ''
 let grid = [
   [null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
@@ -14,13 +16,23 @@ let grid = [
   [null, null, null, null, null, null, null]
 ]
 
+function getUserName(e){
+  playerRed = document.getElementById('player-red').value
+  playerYellow = document.getElementById('player-yellow').value
+  //console.log(name1)
+}
 
 
 function takeTurn (e) {
   // while(winner !== 'yellow' || winner !== 'red'){
   const id = e.target.id // 'row1-col1'   ________x
   // 'rowY-colX'
-  showScores()
+  //showScores()
+  if(playerRed === '' || playerYellow === '')
+  {
+    window.alert('PLEASE ENTER USERNAMEEE!');
+  }
+  else {
   const colNum = id[8]
   const rowNum = id[3]
 
@@ -55,7 +67,7 @@ function takeTurn (e) {
       winnerdisplay.textContent = 'DRAW!'
     }
   }
-
+  }
   // console.log(`You clicked column ${colNum}`)
   // console.log(`Turn number ${turn}`)
   // console.log(grid)
@@ -88,6 +100,8 @@ function reset (e) {
   document.getElementById('winner-message').textContent = ''
   winner = 'not found'
   turn = 0
+  playerRed = ''
+  playerYellow = ''
 }
 
 function checkWinner () {
@@ -167,12 +181,12 @@ function displayWinner () {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'red'
-    winnerdisplay.textContent = 'RED WON!'
+    winnerdisplay.textContent = `${playerRed} WON!`
   } else if (winner === 'yellow') {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'yellow'
-    winnerdisplay.textContent = 'YELLOW WON!'
+    winnerdisplay.textContent = `${playerYellow} WON!`
   }
 }
 

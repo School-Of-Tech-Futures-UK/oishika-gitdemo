@@ -18,9 +18,7 @@ app.use(express.static(__dirname + '/'))
 
 
 
-app.post('/connect', function(req,res) {
-const user1 = req.body.player1
-const user2 = req.body.player2
+app.get('/connect', function(req,res) {
 res.sendFile(__dirname + '/index.html');
 });
 
