@@ -4,7 +4,7 @@ tag.innerText = 'connect 4'
 let turn = 0
 let player1 = 'red'
 let winner = 'not found'
-let scores = {}
+let scores = { 'red': 0, 'yellow': 0}
 let playerRed = ''
 let playerYellow = ''
 let grid = [
@@ -23,16 +23,18 @@ function getUserName(e){
 }
 
 
+
 function takeTurn (e) {
   // while(winner !== 'yellow' || winner !== 'red'){
   const id = e.target.id // 'row1-col1'   ________x
   // 'rowY-colX'
-  //showScores()
+  displayLeaderBoard();
   if(playerRed === '' || playerYellow === '')
   {
     window.alert('PLEASE ENTER USERNAMEEE!');
   }
   else {
+  
   const colNum = id[8]
   const rowNum = id[3]
 
@@ -102,6 +104,7 @@ function reset (e) {
   turn = 0
   playerRed = ''
   playerYellow = ''
+  let scores = { 'red': 0, 'yellow': 0}
 }
 
 function checkWinner () {
@@ -120,7 +123,7 @@ function checkRows () {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] === grid[row][col + 1] && grid[row][col] === grid[row][col + 2] && grid[row][col] === grid[row][col + 3] && grid[row][col] !== null) {
         winner = grid[row][col]
-        scores[winner] += (42 - turn)
+        scores[winner] = (42 - turn)
         //console.log(scores)
         displayWinner()
         return true
@@ -135,7 +138,7 @@ function checkColumns () {
     for (let col = 0; col < 7; col++) {
       if (grid[row][col] === grid[row + 1][col] && grid[row][col] === grid[row + 2][col] && grid[row][col] === grid[row + 3][col] && grid[row][col] !== null) {
         winner = grid[row][col]
-        scores[winner] += (42 - turn)
+        scores[winner] = (42 - turn)
         //console.log(scores)
         displayWinner()
         return true
@@ -150,7 +153,7 @@ function checkDiagonal () {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] === grid[row + 1][col + 1] && grid[row][col] === grid[row + 2][col + 2] && grid[row][col] === grid[row + 3][col + 3] && grid[row][col] !== null) {
         winner = grid[row][col]
-        scores[winner] += (42 - turn)
+        scores[winner] = (42 - turn)
         //console.log(scores)
         displayWinner()
         return true
@@ -166,7 +169,7 @@ function checkCounterDiagonal () {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] === grid[row - 1][col + 1] && grid[row][col] === grid[row - 2][col + 2] && grid[row][col] === grid[row - 3][col + 3] && grid[row][col] !== null) {
         winner = grid[row][col]
-        scores[winner] += (42 - turn)
+        scores[winner] = (42 - turn)
         //console.log(scores)
         displayWinner()
         return true
@@ -181,26 +184,68 @@ function displayWinner () {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'red'
-    winnerdisplay.textContent = `${playerRed} WON!`
+    winnerdisplay.textContent = `${playerRed} WON! with ${scores['red']}`
+    
   } else if (winner === 'yellow') {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'yellow'
-    winnerdisplay.textContent = `${playerYellow} WON!`
+    winnerdisplay.textContent = `${playerYellow} WON! with score ${scores['yellow']}`
   }
+  showScores()
 }
 
 function showScores(){
   console.log('I am here')
-  fetch('http://localhost:3000/connect/scores', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(scores)
-})
-    .then(response => response.json())
-    .then(data => console.log('Success:', data))
+  if (winner === 'red'){
+    const gameWinner = {'player': playerRed, 'score': scores['red'], 'colour': 'red'}
+    fetch('http://localhost:3000/connect/scores', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(gameWinner)
+    }).then(function(response)
+    {
+      if(response.ok){
+        return 
+      } throw new Error('ERROR!')
+    }).catch(function(error){
+      console.log(error)
+    })
+  }
+  else if (winner === 'yellow'){
+    const gameWinner = {'player': playerYellow, 'score': scores['yellow'], 'color': 'yellow'}
+    fetch('http://localhost:3000/connect/scores', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body:JSON.stringify(gameWinner)
+    }).then(function(response){
+      if(response.ok){
+        return
+      } throw new Error('ERROR FROM YELLOW!')
+    }).catch(function(error){
+      console.log(error)
+    })
+  }}
+
+  function displayLeaderBoard(data) {
+    fetch('scores.json')
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        appendData(data);
+    })
+    .catch(function (err) {
+        console.log('error: ' + err);
+    });
 
 }
 
+function appendData(data){
+  var mainContainer = document.getElementById("myData");
+  for (var i = 0; i < 10; i++) {
+      var div = document.createElement("div");
+      div.innerHTML = 'Name: ' + data[i].player + ' ' + data[i].score;
+      mainContainer.appendChild(div);
+  }
+}

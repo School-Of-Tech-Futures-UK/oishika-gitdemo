@@ -32,19 +32,17 @@ app.get('/connect/scores', function(req, res){
 
 app.post('/connect/scores', function (req, res) {
     const scores = req.body
-    results['red'] = scores['red']
-    results['yellow'] = scores['yellow']
-    console.log(JSON.stringify(results))
-    fs.writeFile('scores.json', JSON.stringify(results), err => {
-      if(err){
-        console.log(err)
-      
-      }
-      else
-      console.log('Success!!!!')
-    }
-    )
-
-
+    console.log('HI')
+    console.log(req.body.player)
+    res.send(req.body)
+    let file1 = fs.readFileSync("scores.json") 
+      let json = JSON.parse(file1)
+      //console.log(json)
+      json.push(scores)
+      json.sort(function(a, b) {
+        return b.score - a.score;
+      });
+      //console.log(json)
+      fs.writeFileSync("scores.json", JSON.stringify(json))
   })
 app.listen(3000);
