@@ -1,8 +1,10 @@
+
 const tag = document.getElementById('header')
 tag.innerText = 'connect 4'
 let turn = 0
 let player1 = 'red'
 let winner = 'not found'
+let scores = {}
 let grid = [
   [null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
@@ -12,16 +14,18 @@ let grid = [
   [null, null, null, null, null, null, null]
 ]
 
+
+
 function takeTurn (e) {
   // while(winner !== 'yellow' || winner !== 'red'){
   const id = e.target.id // 'row1-col1'   ________x
   // 'rowY-colX'
-
+  showScores()
   const colNum = id[8]
   const rowNum = id[3]
 
   const lowestAvailableRow = getLowestAvailableRowInColumn(colNum, grid)
-  console.log(`Lowest available row: ${lowestAvailableRow}`)
+  //console.log(`Lowest available row: ${lowestAvailableRow}`)
   // if (winner === 'not found' && turn === 42)
   // {
   //     console.log('draw')
@@ -29,7 +33,7 @@ function takeTurn (e) {
 
   if (lowestAvailableRow !== null && winner === 'not found') {
     turn++
-    console.log(turn)
+    //console.log(turn)
     if (player1 === 'red') {
       grid[lowestAvailableRow][colNum - 1] = 'red'
       document.getElementById(`row${lowestAvailableRow + 1}-col${colNum}`).style.backgroundColor = 'red'
@@ -102,6 +106,8 @@ function checkRows () {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] === grid[row][col + 1] && grid[row][col] === grid[row][col + 2] && grid[row][col] === grid[row][col + 3] && grid[row][col] !== null) {
         winner = grid[row][col]
+        scores[winner] += (42 - turn)
+        //console.log(scores)
         displayWinner()
         return true
       }
@@ -115,6 +121,8 @@ function checkColumns () {
     for (let col = 0; col < 7; col++) {
       if (grid[row][col] === grid[row + 1][col] && grid[row][col] === grid[row + 2][col] && grid[row][col] === grid[row + 3][col] && grid[row][col] !== null) {
         winner = grid[row][col]
+        scores[winner] += (42 - turn)
+        //console.log(scores)
         displayWinner()
         return true
       }
@@ -128,6 +136,8 @@ function checkDiagonal () {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] === grid[row + 1][col + 1] && grid[row][col] === grid[row + 2][col + 2] && grid[row][col] === grid[row + 3][col + 3] && grid[row][col] !== null) {
         winner = grid[row][col]
+        scores[winner] += (42 - turn)
+        //console.log(scores)
         displayWinner()
         return true
       }
@@ -142,6 +152,8 @@ function checkCounterDiagonal () {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] === grid[row - 1][col + 1] && grid[row][col] === grid[row - 2][col + 2] && grid[row][col] === grid[row - 3][col + 3] && grid[row][col] !== null) {
         winner = grid[row][col]
+        scores[winner] += (42 - turn)
+        //console.log(scores)
         displayWinner()
         return true
       }
@@ -163,3 +175,18 @@ function displayWinner () {
     winnerdisplay.textContent = 'YELLOW WON!'
   }
 }
+
+function showScores(){
+  console.log('I am here')
+  fetch('http://localhost:3000/connect/scores', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(scores)
+})
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+
+}
+
