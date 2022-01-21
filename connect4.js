@@ -28,7 +28,7 @@ function takeTurn (e) {
   // while(winner !== 'yellow' || winner !== 'red'){
   const id = e.target.id // 'row1-col1'   ________x
   // 'rowY-colX'
-  displayLeaderBoard();
+  //displayLeaderBoard();
   if(playerRed === '' || playerYellow === '')
   {
     window.alert('PLEASE ENTER USERNAMEEE!');
@@ -105,6 +105,9 @@ function reset (e) {
   playerRed = ''
   playerYellow = ''
   let scores = { 'red': 0, 'yellow': 0}
+  document.getElementById('myData').style.display='none';
+  // let el = document.getElementById('div');
+  // el.remove();
 }
 
 function checkWinner () {
@@ -193,6 +196,7 @@ function displayWinner () {
     winnerdisplay.textContent = `${playerYellow} WON! with score ${scores['yellow']}`
   }
   showScores()
+  displayLeaderBoard();
 }
 
 function showScores(){
@@ -242,6 +246,7 @@ function showScores(){
 }
 
 function appendData(data){
+  document.getElementById('myData').style.display = 'block';
   var mainContainer = document.getElementById("myData");
   for (var i = 0; i < 10; i++) {
       var div = document.createElement("div");
