@@ -29,7 +29,8 @@ let state = {
   player: 'red',
   playerRed : '',
   playerYellow : '',
-  winner: false
+  winner: false,
+  highscoreBoard : []
 
 }
 
@@ -185,13 +186,19 @@ function showScores(){
 
 
 function appendData(data){
-  document.getElementById('myData').style.display = 'block';
-  var mainContainer = document.getElementById("myData");
-  for (var i = 0; i < 10; i++) {
-      var div = document.createElement("div");
-      div.innerHTML = 'Name: ' + data[i].player + ' ' + data[i].score;
-      mainContainer.appendChild(div);
+  const highscore = document.getElementById('myData')
+  highscore.innerHTML = ''
+  highscore.style.display = 'block';
+  // var mainContainer = document.getElementById("myData");
+  // for (var i = 0; i < 10; i++) {
+  //     var div = document.createElement("div");
+  //     div.innerHTML = 'Name: ' + data[i].player + ' ' + data[i].score;
+  //     mainContainer.appendChild(div);
+  // }
+  for (let i = 0; i<10 ; i++){
+    highscore.innerHTML += '<p>' + data[i].player + ':' + data[i].score + '</p>'
   }
+
 }
 
 // PURE FUNCTIONS
