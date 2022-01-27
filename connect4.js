@@ -1,24 +1,41 @@
-
+// IMPURE FUNCTIONS
 const tag = document.getElementById('header')
 tag.innerText = 'connect 4'
-let turn = 0
-let player1 = 'red'
-let winner = 'not found'
-let scores = { 'red': 0, 'yellow': 0}
-let playerRed = ''
-let playerYellow = ''
-let grid = [
-  [null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null]
-]
+// let turn = 0
+// // let player1 = 'red'
+// // let winner = 'not found'
+// let scores = { 'red': 0, 'yellow': 0}
+// let playerRed = ''
+// let playerYellow = ''
+// let grid = [
+//   [null, null, null, null, null, null, null],
+//   [null, null, null, null, null, null, null],
+//   [null, null, null, null, null, null, null],
+//   [null, null, null, null, null, null, null],
+//   [null, null, null, null, null, null, null],
+//   [null, null, null, null, null, null, null]
+// ]
+let state = {
+  grid : [
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null]
+  ],
+  turn : 0,
+  score : 0,
+  player: 'red',
+  playerRed : '',
+  playerYellow : '',
+  winner: false
+
+}
 
 function getUserName(e){
-  playerRed = document.getElementById('player-red').value
-  playerYellow = document.getElementById('player-yellow').value
+  state.playerRed = document.getElementById('player-red').value
+  state.playerYellow = document.getElementById('player-yellow').value
   //console.log(name1)
 }
 
@@ -29,7 +46,7 @@ function takeTurn (e) {
   const id = e.target.id // 'row1-col1'   ________x
   // 'rowY-colX'
   //displayLeaderBoard();
-  if(playerRed === '' || playerYellow === '')
+  if(state.playerRed === '' || state.playerYellow === '')
   {
     window.alert('PLEASE ENTER USERNAMEEE!');
   }
@@ -38,30 +55,31 @@ function takeTurn (e) {
   const colNum = id[8]
   const rowNum = id[3]
 
-  const lowestAvailableRow = getLowestAvailableRowInColumn(colNum, grid)
+  const lowestAvailableRow = getLowestAvailableRowInColumn(state, colNum)
   //console.log(`Lowest available row: ${lowestAvailableRow}`)
   // if (winner === 'not found' && turn === 42)
   // {
   //     console.log('draw')
   // }
 
-  if (lowestAvailableRow !== null && winner === 'not found') {
-    turn++
+  if (lowestAvailableRow !== null && state.winner === false) {
+    state.turn++
     //console.log(turn)
-    if (player1 === 'red') {
-      grid[lowestAvailableRow][colNum - 1] = 'red'
+    if (state.player === 'red') {
+      state.grid[lowestAvailableRow][colNum - 1] = 'red'
       document.getElementById(`row${lowestAvailableRow + 1}-col${colNum}`).style.backgroundColor = 'red'
-      player1 = 'yellow'
+      state.player = swapPlayer(state);
     } else {
-      grid[lowestAvailableRow][colNum - 1] = 'yellow'
+      state.grid[lowestAvailableRow][colNum - 1] = 'yellow'
       document.getElementById(`row${lowestAvailableRow + 1}-col${colNum}`).style.backgroundColor = 'yellow'
-      player1 = 'red'
+      state.player = swapPlayer(state)
     }
   }
-  const answer = checkWinner()
+  const answer = checkWinner(state)
+  //if checkWinner returns true, then we can call display winner 
   // winner = checkWinner();
-  if (answer === 'not found') {
-    if (turn === 42) {
+  if (answer === false) {
+    if (state.turn === 42) {
       console.log('draw')
       const winnerdisplay = document.getElementById('winner-message')
       winnerdisplay.style.display = 'block'
@@ -74,17 +92,9 @@ function takeTurn (e) {
   // console.log(`Turn number ${turn}`)
   // console.log(grid)
 }
-function getLowestAvailableRowInColumn (colNum, myGridSoItIs) {
-  for (let i = 5; i >= 0; i--) {
-    if (myGridSoItIs[i][colNum - 1] === null) {
-      return i
-    }
-  }
 
-  return null
-}
 function reset (e) {
-  grid = [
+  state.grid = [
     [null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null],
@@ -92,7 +102,7 @@ function reset (e) {
     [null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null]
   ]
-  player1 = 'red'
+  state.player = 'red'
   for (let rowIndex = 0; rowIndex < 6; rowIndex++) {
     for (let columnIndex = 0; columnIndex < 7; columnIndex++) {
       document.getElementById(`row${rowIndex + 1}-col${columnIndex + 1}`).style.backgroundColor = 'white'
@@ -100,100 +110,28 @@ function reset (e) {
   }
   document.getElementById('winner-message').style.backgroundColor = 'white'
   document.getElementById('winner-message').textContent = ''
-  winner = 'not found'
-  turn = 0
-  playerRed = ''
-  playerYellow = ''
-  let scores = { 'red': 0, 'yellow': 0}
+  state.winner = false
+  state.turn = 0
+  state.playerRed = ''
+  state.playerYellow = ''
+  state.scores = { 'red': 0, 'yellow': 0}
   document.getElementById('myData').style.display='none';
   // let el = document.getElementById('div');
   // el.remove();
 }
 
-function checkWinner () {
-  // console.log('I am here')
-  const row_result = checkRows()
-  const col_result = checkColumns()
-  const dia_result = checkDiagonal()
-  const counterdia_result = checkCounterDiagonal()
-
-  if (row_result === false && col_result === false && dia_result === false && counterdia_result === false) { return 'not found' }
-}
-
-function checkRows () {
-  // console.log('I am checking rows')
-  for (let row = 0; row < 6; row++) {
-    for (let col = 0; col < 4; col++) {
-      if (grid[row][col] === grid[row][col + 1] && grid[row][col] === grid[row][col + 2] && grid[row][col] === grid[row][col + 3] && grid[row][col] !== null) {
-        winner = grid[row][col]
-        scores[winner] = (42 - turn)
-        //console.log(scores)
-        displayWinner()
-        return true
-      }
-    }
-  }
-  return false
-}
-
-function checkColumns () {
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 7; col++) {
-      if (grid[row][col] === grid[row + 1][col] && grid[row][col] === grid[row + 2][col] && grid[row][col] === grid[row + 3][col] && grid[row][col] !== null) {
-        winner = grid[row][col]
-        scores[winner] = (42 - turn)
-        //console.log(scores)
-        displayWinner()
-        return true
-      }
-    }
-  }
-  return false
-}
-
-function checkDiagonal () {
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 4; col++) {
-      if (grid[row][col] === grid[row + 1][col + 1] && grid[row][col] === grid[row + 2][col + 2] && grid[row][col] === grid[row + 3][col + 3] && grid[row][col] !== null) {
-        winner = grid[row][col]
-        scores[winner] = (42 - turn)
-        //console.log(scores)
-        displayWinner()
-        return true
-      }
-    }
-  }
-  return false
-}
-
-function checkCounterDiagonal () {
-  // console.log('Checking counterD')
-  for (let row = 3; row < 6; row++) {
-    for (let col = 0; col < 4; col++) {
-      if (grid[row][col] === grid[row - 1][col + 1] && grid[row][col] === grid[row - 2][col + 2] && grid[row][col] === grid[row - 3][col + 3] && grid[row][col] !== null) {
-        winner = grid[row][col]
-        scores[winner] = (42 - turn)
-        //console.log(scores)
-        displayWinner()
-        return true
-      }
-    }
-  }
-  return false
-}
-
 function displayWinner () {
-  if (winner === 'red') {
+  if (state.winner === 'red') {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'red'
-    winnerdisplay.textContent = `${playerRed} WON! with ${scores['red']}`
+    winnerdisplay.textContent = `${state.playerRed} WON! with ${state.scores} points!`
     
-  } else if (winner === 'yellow') {
+  } else if (state.winner === 'yellow') {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'yellow'
-    winnerdisplay.textContent = `${playerYellow} WON! with score ${scores['yellow']}`
+    winnerdisplay.textContent = `${state.playerYellow} WON! with score ${state.scores} points!`
   }
   showScores()
   displayLeaderBoard();
@@ -201,8 +139,8 @@ function displayWinner () {
 
 function showScores(){
   console.log('I am here')
-  if (winner === 'red'){
-    const gameWinner = {'player': playerRed, 'score': scores['red'], 'colour': 'red'}
+  if (state.winner === 'red'){
+    const gameWinner = {'player': state.playerRed, 'score': state.scores, 'colour': 'red'}
     fetch('http://localhost:3000/connect/scores', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -216,8 +154,8 @@ function showScores(){
       console.log(error)
     })
   }
-  else if (winner === 'yellow'){
-    const gameWinner = {'player': playerYellow, 'score': scores['yellow'], 'color': 'yellow'}
+  else if (state.winner === 'yellow'){
+    const gameWinner = {'player': state.playerYellow, 'score': state.scores, 'color': 'yellow'}
     fetch('http://localhost:3000/connect/scores', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -245,6 +183,7 @@ function showScores(){
 
 }
 
+
 function appendData(data){
   document.getElementById('myData').style.display = 'block';
   var mainContainer = document.getElementById("myData");
@@ -254,3 +193,118 @@ function appendData(data){
       mainContainer.appendChild(div);
   }
 }
+
+// PURE FUNCTIONS
+
+function getLowestAvailableRowInColumn (state, colNum) {
+  for (let i = 5; i >= 0; i--) {
+    if (state.grid[i][colNum - 1] === null) {
+      return i;
+    }
+  }
+
+  return null
+}
+
+function checkWinner (state) {
+  // console.log('I am here')
+  const row_result = checkRows(state)
+  const col_result = checkColumns(state)
+  const dia_result = checkDiagonal(state)
+  const counterdia_result = checkCounterDiagonal(state)
+
+  if (row_result === false && col_result === false && dia_result === false && counterdia_result === false) 
+  { return false }
+  else
+  {
+    displayWinner();
+    return true;
+  }
+}
+
+function checkDiagonal (state) {
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (state.grid[row][col] === state.grid[row + 1][col + 1] && state.grid[row][col] === state.grid[row + 2][col + 2] && state.grid[row][col] === state.grid[row + 3][col + 3] && state.grid[row][col] !== null) {
+        state.winner = state.grid[row][col]
+        state.scores = (42 - state.turn)
+        //console.log(scores)
+        //displayWinner()
+        return true
+      }
+    }
+  }
+  return false
+}
+
+function checkCounterDiagonal (state) {
+  // console.log('Checking counterD')
+  for (let row = 3; row < 6; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (state.grid[row][col] === state.grid[row - 1][col + 1] && state.grid[row][col] === state.grid[row - 2][col + 2] && state.grid[row][col] === state.grid[row - 3][col + 3] && state.grid[row][col] !== null) {
+        state.winner = state.grid[row][col]
+        state.scores = (42 - state.turn)
+        //console.log(scores)
+        //displayWinner()
+        return true
+      }
+    }
+  }
+  return false
+}
+
+function checkColumns (state) {
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 7; col++) {
+      if (state.grid[row][col] === state.grid[row + 1][col] && state.grid[row][col] === state.grid[row + 2][col] && state.grid[row][col] === state.grid[row + 3][col] && state.grid[row][col] !== null) {
+        state.winner = state.grid[row][col]
+        state.scores = (42 - state.turn)
+        //console.log(scores)
+        //displayWinner()
+        return true
+      }
+    }
+  }
+  return false
+}
+
+function checkRows (state) {
+  // console.log('I am checking rows')
+  for (let row = 0; row < 6; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (state.grid[row][col] === state.grid[row][col + 1] && state.grid[row][col] === state.grid[row][col + 2] && state.grid[row][col] === state.grid[row][col + 3] && state.grid[row][col] !== null) {
+        state.winner = state.grid[row][col]
+        state.scores = (42 - state.turn)
+        //console.log(scores)
+        //displayWinner()
+        return true
+      }
+    }
+  }
+  return false
+}
+
+function swapPlayer(state) {
+  if(state.player === 'red')
+    return 'yellow'
+  else
+  return 'red'
+}
+
+if (typeof exports === 'object') {
+    console.log("Running in Node")
+    // Node. Does not work with strict CommonJS, but only CommonJS-like 
+    // environments that support module.exports, like Node.
+    module.exports = {
+        checkRows,
+        checkDiagonal,
+        checkColumns,
+        checkCounterDiagonal,
+        checkWinner,
+        reset,
+        
+    }
+} else {
+    console.log("Running in Browser")
+}
+
