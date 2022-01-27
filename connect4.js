@@ -1,20 +1,6 @@
 // IMPURE FUNCTIONS
-const tag = document.getElementById('header')
-tag.innerText = 'connect 4'
-// let turn = 0
-// // let player1 = 'red'
-// // let winner = 'not found'
-// let scores = { 'red': 0, 'yellow': 0}
-// let playerRed = ''
-// let playerYellow = ''
-// let grid = [
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null]
-// ]
+// const tag = document.getElementById('header')
+// tag.innerText = 'connect 4'
 let state = {
   grid : [
     [null, null, null, null, null, null, null],
@@ -30,7 +16,8 @@ let state = {
   playerRed : '',
   playerYellow : '',
   winner: false,
-  highscoreBoard : []
+  highscoreBoard : [],
+  winnerDeclared : false
 
 }
 
@@ -51,7 +38,7 @@ function takeTurn (e) {
   {
     window.alert('PLEASE ENTER USERNAMEEE!');
   }
-  else {
+  else if (state.winnerDeclared === false) {
   
   const colNum = id[8]
   const rowNum = id[3]
@@ -69,11 +56,11 @@ function takeTurn (e) {
     if (state.player === 'red') {
       state.grid[lowestAvailableRow][colNum - 1] = 'red'
       document.getElementById(`row${lowestAvailableRow + 1}-col${colNum}`).style.backgroundColor = 'red'
-      state.player = swapPlayer(state);
+      state.player = swapPlayer(state.player);
     } else {
       state.grid[lowestAvailableRow][colNum - 1] = 'yellow'
       document.getElementById(`row${lowestAvailableRow + 1}-col${colNum}`).style.backgroundColor = 'yellow'
-      state.player = swapPlayer(state)
+      state.player = swapPlayer(state.player)
     }
   }
   const answer = checkWinner(state)
@@ -81,6 +68,7 @@ function takeTurn (e) {
   // winner = checkWinner();
   if (answer === false) {
     if (state.turn === 42) {
+      state.winnerDeclared = true
       console.log('draw')
       const winnerdisplay = document.getElementById('winner-message')
       winnerdisplay.style.display = 'block'
@@ -111,6 +99,7 @@ function reset (e) {
   }
   document.getElementById('winner-message').style.backgroundColor = 'white'
   document.getElementById('winner-message').textContent = ''
+  state.winnerDeclared = false
   state.winner = false
   state.turn = 0
   state.playerRed = ''
@@ -224,6 +213,7 @@ function checkWinner (state) {
   { return false }
   else
   {
+    state.winnerDeclared = true
     displayWinner();
     return true;
   }
@@ -291,27 +281,28 @@ function checkRows (state) {
   return false
 }
 
-function swapPlayer(state) {
-  if(state.player === 'red')
+function swapPlayer(player) {
+  if(player === 'red')
     return 'yellow'
   else
   return 'red'
 }
 
-if (typeof exports === 'object') {
-    console.log("Running in Node")
-    // Node. Does not work with strict CommonJS, but only CommonJS-like 
-    // environments that support module.exports, like Node.
-    module.exports = {
-        checkRows,
-        checkDiagonal,
-        checkColumns,
-        checkCounterDiagonal,
-        checkWinner,
-        reset,
+// if (typeof exports === 'object') {
+//     console.log("Running in Node")
+//     // Node. Does not work with strict CommonJS, but only CommonJS-like 
+//     // environments that support module.exports, like Node.
+//     module.exports = {
+//         checkRows,
+//         checkDiagonal,
+//         checkColumns,
+//         checkCounterDiagonal,
+//         checkWinner,
+//         reset,
         
-    }
-} else {
-    console.log("Running in Browser")
-}
+//     }
+// } else {
+//     console.log("Running in Browser")
+// }
 
+//module.exports = {swapPlayer}
