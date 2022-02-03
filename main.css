@@ -11,7 +11,9 @@
     background-color: white;
 
 }
-
+.col:hover {
+    background-color: blue;
+}
 .row {
     width: 400px;
     margin: 0px auto;
@@ -42,13 +44,16 @@
     font-weight: bold;
     color: black;
     border: 5px black solid;
-    border-radius: 5%;
+    border-radius: 15%;
     width: 420px;
     background-image: linear-gradient(to top left, rgb(55, 0, 255), rgb(252, 38, 163));
     grid-template-columns: 100px 50px 100px;
     grid-template-rows: 80px auto 80px; 
     column-gap: 10px;
     row-gap: 15px;
+    padding: 15px 32px;
+    margin-right: 10px;
+    margin-left: 10px;
 }
 
 .reset-button {
@@ -86,7 +91,13 @@
     font-size: 16px;
     margin-top: 10px;
     border-radius: 10%;
+    margin: 0 auto;
   }
+  .submit-button-class {
+      padding: 5px;
+    text-align: center;
+}
+
 
   #winner-message {
     display: none;
@@ -103,10 +114,6 @@
     justify-content: center;
 }
 
-#parent {
+.parent {
     display: flex;
-}
-
-.left {
-    float: left;
 }

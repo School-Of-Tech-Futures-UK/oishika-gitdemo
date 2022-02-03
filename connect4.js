@@ -39,7 +39,7 @@ function takeTurn (e) {
     const colNum = id[8]
     // const rowNum = id[3]
 
-    const lowestAvailableRow = getLowestAvailableRowInColumn(state, colNum)
+    const lowestAvailableRow = getLowestAvailableRowInColumn(state.grid, colNum)
 
     if (lowestAvailableRow !== null && state.winner === false) {
       state.turn++
@@ -62,7 +62,6 @@ function takeTurn (e) {
     if (answer === false) {
       if (state.turn === 42) {
         state.winnerDeclared = true
-        console.log('draw')
         const winnerdisplay = document.getElementById('winner-message')
         winnerdisplay.style.display = 'block'
         winnerdisplay.style.backgroundColor = 'lightblue'
@@ -174,9 +173,9 @@ function appendData (data){
 
 // PURE FUNCTIONS
 // Check which the lowest column is available (either the column is full or you have a row that's unoccupied)
-function getLowestAvailableRowInColumn (state, colNum) {
+function getLowestAvailableRowInColumn (grid, colNum) {
   for (let i = 5; i >= 0; i--) {
-    if (state.grid[i][colNum - 1] === null) {
+    if (grid[i][colNum - 1] === null) {
       return i
     }
   }
@@ -206,7 +205,7 @@ function checkDiagonal (state) {
       if (state.grid[row][col] === state.grid[row + 1][col + 1] && state.grid[row][col] === state.grid[row + 2][col + 2] && state.grid[row][col] === state.grid[row + 3][col + 3] && state.grid[row][col] !== null) {
         state.winner = state.grid[row][col]
         state.score = (42 - state.turn)
-        return true
+        return state.grid[row][col]
       }
     }
   }
@@ -219,7 +218,7 @@ function checkCounterDiagonal (state) {
       if (state.grid[row][col] === state.grid[row - 1][col + 1] && state.grid[row][col] === state.grid[row - 2][col + 2] && state.grid[row][col] === state.grid[row - 3][col + 3] && state.grid[row][col] !== null) {
         state.winner = state.grid[row][col]
         state.score = (42 - state.turn)
-        return true
+        return state.grid[row][col]
       }
     }
   }
@@ -232,7 +231,7 @@ function checkColumns (state) {
       if (state.grid[row][col] === state.grid[row + 1][col] && state.grid[row][col] === state.grid[row + 2][col] && state.grid[row][col] === state.grid[row + 3][col] && state.grid[row][col] !== null) {
         state.winner = state.grid[row][col]
         state.score = (42 - state.turn)
-        return true
+        return state.grid[row][col]
       }
     }
   }
@@ -245,8 +244,7 @@ function checkRows (state) {
       if (state.grid[row][col] === state.grid[row][col + 1] && state.grid[row][col] === state.grid[row][col + 2] && state.grid[row][col] === state.grid[row][col + 3] && state.grid[row][col] !== null) {
         state.winner = state.grid[row][col]
         state.score = (42 - state.turn)
-        // console.log(state.score)
-        return true
+        return state.grid[row][col]
       }
     }
   }
@@ -259,4 +257,4 @@ function swapPlayer (player) {
 }
 
 // Uncomment when you want to test
-// module.exports = {swapPlayer}
+module.exports = {swapPlayer, getLowestAvailableRowInColumn}
