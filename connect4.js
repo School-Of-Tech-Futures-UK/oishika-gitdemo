@@ -1,5 +1,7 @@
 /* eslint-disable space-before-blocks */
 // IMPURE FUNCTIONS
+
+// state variable storing the state of the game
 const state = {
   grid: [
     [null, null, null, null, null, null, null],
@@ -19,13 +21,14 @@ const state = {
   winnerDeclared: false
 
 }
-
+// captures usernames of the users playing
 // eslint-disable-next-line no-unused-vars
 function getUserName (e){
   state.playerRed = document.getElementById('player-red').value
   state.playerYellow = document.getElementById('player-yellow').value
 }
 
+// Populate appropriate column with discs
 // eslint-disable-next-line no-unused-vars
 function takeTurn (e) {
   const id = e.target.id // 'row1-col1'   ________x
@@ -52,6 +55,8 @@ function takeTurn (e) {
         state.player = swapPlayer(state.player)
       }
     }
+
+    // check if we have a winner here if there is a draw, then show an appropriate message
     const answer = checkWinner(state)
     // if checkWinner returns true, then we can call display winner
     if (answer === false) {
@@ -66,7 +71,7 @@ function takeTurn (e) {
     }
   }
 }
-
+// when the game is reset, the whole game state is reset to the initial state and winner displays are cleared
 // eslint-disable-next-line no-unused-vars
 function reset (e) {
   state.grid = [
@@ -95,25 +100,26 @@ function reset (e) {
 }
 
 function displayWinner () {
+  const audio = new Audio('mixkit-animated-small-group-applause-523.mp3')
   if (state.winner === 'red') {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'red'
     winnerdisplay.textContent = `${state.playerRed} WON! with ${state.score} points!`
-    const audio = new Audio('mixkit-animated-small-group-applause-523.mp3')
     audio.play()
   } else if (state.winner === 'yellow') {
     const winnerdisplay = document.getElementById('winner-message')
     winnerdisplay.style.display = 'block'
     winnerdisplay.style.backgroundColor = 'yellow'
     winnerdisplay.textContent = `${state.playerYellow} WON! with score ${state.score} points!`
+    audio.play()
   }
   showScores()
   displayLeaderBoard()
 }
 
+// Send the scores, names and player colours of the winners to the API
 function showScores () {
-  // console.log('I am here')
   if (state.winner === 'red'){
     const gameWinner = { player: state.playerRed, score: state.score, colour: 'red' }
     fetch('http://localhost:3000/connect/scores', {
@@ -143,6 +149,7 @@ function showScores () {
   }
 }
 
+// Fetch the data from the existing json of scores (scoreboard)
 function displayLeaderBoard (data) {
   fetch('scores.json')
     .then(function (response) {
@@ -155,7 +162,7 @@ function displayLeaderBoard (data) {
       console.log('error: ' + err)
     })
 }
-
+// Display the highscores
 function appendData (data){
   const highscore = document.getElementById('myData')
   highscore.innerHTML = ''
@@ -166,7 +173,7 @@ function appendData (data){
 }
 
 // PURE FUNCTIONS
-
+// Check which the lowest column is available (either the column is full or you have a row that's unoccupied)
 function getLowestAvailableRowInColumn (state, colNum) {
   for (let i = 5; i >= 0; i--) {
     if (state.grid[i][colNum - 1] === null) {
@@ -177,6 +184,8 @@ function getLowestAvailableRowInColumn (state, colNum) {
   return null
 }
 
+// Check all possible combinations, like rows, columns, diagonals and counterdiagonals
+// If any one of these returns a true, there is a winner!
 function checkWinner (state) {
   // wherever checkwinner is being called, that calls display winner
   const rowResult = checkRows(state)
@@ -190,7 +199,7 @@ function checkWinner (state) {
     return true
   }
 }
-
+// Check along all possible diagonals if there is a winner
 function checkDiagonal (state) {
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 4; col++) {
@@ -203,7 +212,7 @@ function checkDiagonal (state) {
   }
   return false
 }
-
+// Check along all possible counter-diagonals if there is a winner
 function checkCounterDiagonal (state) {
   for (let row = 3; row < 6; row++) {
     for (let col = 0; col < 4; col++) {
@@ -216,7 +225,7 @@ function checkCounterDiagonal (state) {
   }
   return false
 }
-
+// Check along all possible columns if there is a winner
 function checkColumns (state) {
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 7; col++) {
@@ -229,7 +238,7 @@ function checkColumns (state) {
   }
   return false
 }
-
+// Check all possible rows if there is a winner
 function checkRows (state) {
   for (let row = 0; row < 6; row++) {
     for (let col = 0; col < 4; col++) {
@@ -244,6 +253,7 @@ function checkRows (state) {
   return false
 }
 
+// Swap players at every turn
 function swapPlayer (player) {
   if (player === 'red') { return 'yellow' } else { return 'red' }
 }

@@ -9,7 +9,6 @@ app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
 }))
 app.use(express.json()) // to support JSON-encoded bodies
 const fs = require('fs')
-// const { response } = require('express');
 
 const data = fs.readFileSync('scores.json', 'utf8')
 const results = JSON.parse(data)
@@ -20,27 +19,20 @@ app.get('/connect', function (req,res) {
   res.sendFile(__dirname + '/index2.html')
 })
 
-// app.get('/enterusername', function (req,res) {
-//   res.sendFile(__dirname + '/form.html')
-// })
-
+// fetch the scores
 app.get('/connect/scores', function (req, res) {
   res.json(results)
 })
-
+// Fetch the names and scores of the winning player from the game and store them in a file after sorting the scores 
 app.post('/connect/scores', function (req, res) {
   const scores = req.body
-  console.log('HI')
-  console.log(req.body.player)
   res.send(req.body)
-  let file1 = fs.readFileSync('scores.json') 
-  let json = JSON.parse(file1)
-  // console.log(json)
+  const file1 = fs.readFileSync('scores.json') 
+  const json = JSON.parse(file1)
   json.push(scores)
   json.sort(function (a, b) {
     return b.score - a.score
   })
-  // console.log(json)
   fs.writeFileSync('scores.json', JSON.stringify(json))
 })
 app.listen(3000)
