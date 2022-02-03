@@ -15,10 +15,23 @@
     <h1 id="header"> CONNECT 4</h1>
 
     
-    <div id = 'parent'>
+    <div class = 'parent justify-content-start'>
     <div id = "winner-message"></div>
-    <div id = "score-red"></div>
-    <div id = "score-yellow"></div>
+
+    <div class = "names">
+        <label id = "redtext">Enter red name:</label><br>
+        <input class = "textboxred" type="text" id="rname"><br>
+        <label id = "yellowtext">Enter yellow name:</label><br>
+        <input  class = "textboxyellow" type="text" id="yname"><br>
+        <button id = "namesbutton" onClick= "takeNames();">Submit</button>
+        
+        <div class = "HighscoreBoard">
+
+    </div>
+    <p style="font-family: Graphik;">Top 10 Highscores:</p>
+    <p id = "highscore"style ="display: none;"></p>
+    </div>
+</div>
     <div id = 'right'>
     <div id="connect4Board">
         <div class="row">
